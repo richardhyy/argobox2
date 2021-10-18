@@ -1,0 +1,68 @@
+{% extends "argo/base_generic.html" %}
+{% load static %}
+
+{% block title %}{{ page_title }}{% endblock %}
+
+{% block content %}
+    {% if error_message %}
+        <br>
+        <div class="alert alert-warning" role="alert">
+            {{ error_message }}
+        </div>
+    {% endif %}
+
+    <br>
+
+    {% if data_list %}
+    <h1>Page {{ current_page }} out of {{ total_pages }}</h1>
+    <div class="card">
+        <div class="card-body">
+        <table class="table table-hover">
+            <thead>
+            <tr>
+                <th>Platform &numero;</th>
+                <th>Cycle &numero;</th>
+                <th>Date Creation</th>
+                <th>Project Name</th>
+                <th>Pi Name</th>
+                <th>Instrument Type</th>
+                <th>Sample Direction</th>
+                <th>Data Mode</th>
+                <th>Julian Day</th>
+                <th>Date</th>
+                <th>Latitude</th>
+                <th>Longitude</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for entry in data_list %}
+                <tr>
+                    <td>{{ entry.platform_number }}</td>
+                    <td>{{ entry.cycle_number }}</td>
+                    <td>{{ entry.date_creation }}</td>
+                    <td>{{ entry.project_name }}</td>
+                    <td>{{ entry.pi_name }}</td>
+                    <td>{{ entry.instrument_type }}</td>
+                    <td>{{ entry.sample_direction }}</td>
+                    <td>{{ entry.data_mode }}</td>
+                    <td>{{ entry.julian_day }}</td>
+                    <td>{{ entry.date }}</td>
+                    <td>{{ entry.latitude }}</td>
+                    <td>{{ entry.longitude }}</td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+        </div>
+    </div>
+    {% else %}
+    <div class="alert alert-warning" role="alert">
+        Error processing your request.
+    </div>
+    {% endif %}
+    <br>
+{% endblock %}
+
+{% block script %}
+
+{% endblock %}

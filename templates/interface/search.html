@@ -1,0 +1,66 @@
+{% extends "argo/base_generic.html" %}
+{% load static %}
+
+{% block title %}{{ page_title }}{% endblock %}
+
+{% block content %}
+    <br>
+
+    <div class="card">
+        <div class="card-body">
+            <form action="{% url 'argo:search' %}" method="post">
+                {% csrf_token %}
+                <input type="text" name="data_type" value="core" class="form-control">
+                <br>
+                <input type="number" name="platform_number" value="5905646" class="form-control">
+{#                <br>#}
+{#                <input type="number" name="cycle" value="365">#}
+                <br>
+                <input type="submit" value="Search" class="btn btn-primary">
+            </form>
+        </div>
+    </div>
+
+    <br>
+
+    {% if error_message %}
+        <div class="alert alert-warning" role="alert">
+            {{ error_message }}
+        </div>
+    {% endif %}
+
+
+    {% if data_list %}
+    <div class="card">
+        <div class="card-body">
+        <table class="table table-hover">
+            <thead>
+            <tr>
+                <th>Platform &numero;</th>
+                <th>Cycle &numero;</th>
+                <th>Pressure</th>
+                <th>Temperature</th>
+                <th>Salinity</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for entry in data_list %}
+                <tr>
+                    <td>{{ entry.platform_number }}</td>
+                    <td>{{ entry.cycle_number }}</td>
+                    <td>{{ entry.cpressure }}</td>
+                    <td>{{ entry.ctemperature }}</td>
+                    <td>{{ entry.csalinity }}</td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+        </div>
+    </div>
+    <br>
+    {% endif %}
+{% endblock %}
+
+{% block script %}
+
+{% endblock %}

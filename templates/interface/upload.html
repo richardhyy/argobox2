@@ -1,0 +1,48 @@
+{% extends "argo/base_generic.html" %}
+{% load static %}
+
+{% block title %}{{ page_title }}{% endblock %}
+
+{% block content %}
+    <br>
+    {% if msg_success %}
+        <div class="alert alert-success" role="alert">
+            {{ msg_success }}
+        </div>
+        <br>
+    {% endif %}
+    {% if msg_warning %}
+        <div class="alert alert-warning" role="alert">
+            {{ msg_warning }}
+        </div>
+        <br>
+    {% endif %}
+
+    {% if status %}
+        <div class="alert alert-info" role="alert">
+        {{ status }}
+{#        {% for key, value in status %}#}
+{#            {{ key }} : {{ value }}#}
+{#        {% endfor %}#}
+        </div>
+        <br>
+    {% endif %}
+
+{#{% url 'oneapp:qr' data=major|add:";"|add:name %}#}
+    <div class="card">
+        <div class="card-body">
+            <form action="{% url 'argo:upload_core' %}" enctype="multipart/form-data" method="post">
+                {% csrf_token %}
+                <label for="file">Select meta file</label>
+                <input type="file" multiple="multiple" name="file" id="file" class="btn btn-outline-primary">
+                <br>
+                <button type="submit" class="btn btn-primary">Upload</button>
+            </form>
+        </div>
+    </div>
+    <br>
+{% endblock %}
+
+{% block script %}
+
+{% endblock %}
