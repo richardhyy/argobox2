@@ -164,7 +164,7 @@ if __name__ == "__main__":
         # values = []
         # for key in entry.keys():
         #     values.append(entry[key])
-        e = models.Header(
+        e = models.ArgoHeader(
             platform_number=entry['platform_number'],
             cycle_number=entry['cycle_number'],
             date_creation=datetime.strptime(entry['date_creation'], datetime_format),

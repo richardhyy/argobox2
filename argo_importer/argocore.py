@@ -1,32 +1,13 @@
 from collections import OrderedDict
 from os import listdir
-import argoheader
-
-
-field_format_dict = OrderedDict([
-    ('platform_number', '%s'),
-    ('cycle_number', '%s'),
-    ('pressure', '\'{pressure}\''),
-    ('cpressure', '\'{cpressure}\''),
-    ('qpressure', '\'{qpressure}\''),
-    ('temperature', '\'{temperature}\''),
-    ('ctemperature', '\'{ctemperature}\''),
-    ('qtemperature', '\'{qtemperature}\''),
-    ('salinity', '\'{salinity}\''),
-    ('csalinity', '\'{csalinity}\''),
-    ('qsalinity', '\'{qsalinity}\''),
-])
 
 
 def profile_data_to_json(path):
-    # argoheader.parse_and_append_header_tsv(path, 'argoheader.tsv')
-
     def remove_space(text):
         return text.replace(' ', '')
 
     def contain_ignore_space(full, sub):
         return remove_space(sub) in full
-
 
     entry = {}
 
@@ -47,7 +28,7 @@ def profile_data_to_json(path):
 
     file = open(path, 'r')
     lines = file.readlines()
-    
+
     data_table = {}
 
     data_section = False
@@ -56,13 +37,12 @@ def profile_data_to_json(path):
         if line == '':
             continue
 
-
         if line.startswith('=============='):
             data_section = True
-            
+
             for index in column_index_field_dict.keys():
                 data_table[index] = []
-            
+
             continue
 
         if data_section:
@@ -89,12 +69,12 @@ def profile_data_to_json(path):
                 for prefix in column_header_prefix_field_dict.keys():
                     if split[1].startswith(remove_space(prefix)):
                         _field_name = column_header_prefix_field_dict[prefix]
-                
+
                 if _field_name == None:
                     print('column `{}` does not match with any known fields'.format(split[1]))
                 else:
                     column_index_field_dict[_index] = _field_name
-    
+
     for col_index in column_index_field_dict.keys():
         field = column_index_field_dict[col_index]
         list_str = '{' + (','.join(data_table[col_index])) + '}'
@@ -105,6 +85,7 @@ def profile_data_to_json(path):
 
 if __name__ == "__main__":
     import os
+
     os.environ['DJANGO_SETTINGS_MODULE'] = 'djangoing.settings'
 
     import django
@@ -115,7 +96,7 @@ if __name__ == "__main__":
     # settings.configure(default_settings=argo_defaults, DEBUG=True)
     django.setup()
 
-    from argo import models
+    from api import models
 
     from os.path import isfile, join
 
@@ -125,10 +106,15 @@ if __name__ == "__main__":
     entries = []
     for file in files:
         entries.append(profile_data_to_json(path + "/" + file))
-    
+
     print("{} meta files loaded".format(len(entries)))
 
     for entry in entries:
+        if models.ArgoCore.objects.filter(platform_number=entry['platform_number'],
+                                          cycle_number=entry['cycle_number']).exists():
+            # pass if the record already exists
+            continue
+
         e = models.ArgoCore(
             platform_number=entry['platform_number'],
             cycle_number=entry['cycle_number'],
