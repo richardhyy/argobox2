@@ -2,40 +2,44 @@ import datetime
 import json
 
 
-FEATURE_TEMPLATE = {
+FEATURE_TEMPLATE = """{{
     "type": "Feature",
-    "id": "undefined",
-    "geometry": {
-        "type": "undefined",
-        "coordinates": []
-    },
+    "id": "{id}",
+    "geometry": {{
+        "type": "{type}",
+        "coordinates": [{coordinates}]
+    }},
     "geometry_name": "the_geom",
-    "properties": {
-    }
-}
+    "properties": {{{properties}}}
+}}"""
 
-FEATURE_COLLECTION_TEMPLATE = {
+FEATURE_COLLECTION_TEMPLATE = """{{
     "type": "FeatureCollection",
-    "features": [],
-    "totalFeatures": 0,
-    "numberMatched": 0,
-    "numberReturned": 0,
-    "timeStamp": "YYYY-MM-DDTHH:MM:SS.SSSZ",
-    "crs": {
+    "features": [{features}],
+    "totalFeatures": {totalFeatures},
+    "numberMatched": {numberMatched},
+    "numberReturned": {numberReturned},
+    "timeStamp": "{timeStamp}",
+    "crs": {{
         "type": "name",
-        "properties": {
+        "properties": {{
             "name": "urn:ogc:def:crs:EPSG::4326"
-        }
-    }
-}
+        }}
+    }}
+}}"""
 
 
 def create_point_feature(feature_id, coordinates, properties):
-    feature = FEATURE_TEMPLATE
-    feature['id'] = feature_id
-    feature['geometry']['type'] = 'Point' if len(coordinates) == 1 else 'MultiPoint'
-    feature['geometry']['coordinates'].append(coordinates)
-    feature['properties'] = properties
+    feature = FEATURE_TEMPLATE.format(
+        id=feature_id,
+        type=('Point' if len(coordinates) == 1 else 'MultiPoint'),
+        coordinates=(','.join([('[' + (','.join([str(v) for v in pair])) + ']') for pair in coordinates])),
+        properties=properties
+    )
+    # feature['id'] = feature_id
+    # feature['geometry']['type'] = 'Point' if len(coordinates) == 1 else 'MultiPoint'
+    # feature['geometry']['coordinates'].append(coordinates)
+    # feature['properties'] = properties
 
     return feature
 
@@ -43,11 +47,17 @@ def create_point_feature(feature_id, coordinates, properties):
 def create_point_collection(features, total_features=0):
     collectionSize = len(features)
 
-    collection = FEATURE_COLLECTION_TEMPLATE
-    collection['features'] = features
-    collection['totalFeatures'] = collectionSize if total_features == 0 else total_features
-    collection['numberMatched'] = collectionSize
-    collection['numberReturned'] = collectionSize
-    collection['timestamp'] = datetime.datetime.utcnow().strftime("%Y-%m-%dT%H:%M:%S.%fZ")
+    collection = FEATURE_COLLECTION_TEMPLATE.format(
+        features=','.join(features),
+        totalFeatures=collectionSize if total_features == 0 else total_features,
+        numberMatched=collectionSize,
+        numberReturned=collectionSize,
+        timeStamp=datetime.datetime.utcnow().strftime("%Y-%m-%dT%H:%M:%S.%fZ")
+    )
+    # collection['features'] = features
+    # collection['totalFeatures'] = collectionSize if total_features == 0 else total_features
+    # collection['numberMatched'] = collectionSize
+    # collection['numberReturned'] = collectionSize
+    # collection['timestamp'] = datetime.datetime.utcnow().strftime("%Y-%m-%dT%H:%M:%S.%fZ")
 
-    return json.dumps(collection)
+    return collection

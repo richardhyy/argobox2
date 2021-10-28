@@ -1,3 +1,6 @@
+import json
+import time
+
 from django.http import HttpResponse
 from django.http import JsonResponse
 
@@ -26,7 +29,7 @@ def header(request, platform_number, cycle_number):
         features.append(
             geojson.create_point_feature(
                 str(data['platform_number']) + '@' + str(data['cycle_number']),
-                [data['longitude'], data['latitude']],
+                [[data['longitude'], data['latitude']]],
                 {
                     'cycle_number': data['cycle_number'],
                     'date_creation': str(data['date_creation']),
@@ -41,7 +44,10 @@ def header(request, platform_number, cycle_number):
             )
         )
 
+    print("Timing start")
+    t1 = time.time_ns() / 1000
     collection = geojson.create_point_collection(features)
+    print(time.time_ns() / 1000 - t1)
 
     return HttpResponse(collection, content_type='application/json')
 
@@ -71,4 +77,4 @@ def core(request, platform_number, cycle_number):
 
     collection = geojson.create_point_collection(features)
 
-    return HttpResponse(collection, content_type='application/json')
+    return HttpResponse(json.dumps(collection), content_type='application/json')
