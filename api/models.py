@@ -1,103 +1,5 @@
 from django.db import models
-
-
-# class ArgoBoxInformation(models.Model):
-#     argo_data_last_update = models.DateTimeField()
-
-
-class ArgoBbp(models.Model):
-    platform_number = models.IntegerField(primary_key=True)
-    cycle_number = models.IntegerField()
-    pressure = models.DecimalField(max_digits=7, decimal_places=1, blank=True, null=True)
-    cpressure = models.DecimalField(max_digits=7, decimal_places=1, blank=True, null=True)
-    qpressure = models.CharField(max_length=1, blank=True, null=True)
-    backunknown = models.DecimalField(max_digits=12, decimal_places=6, blank=True, null=True)
-    cbackunknown = models.DecimalField(max_digits=12, decimal_places=6, blank=True, null=True)
-    qbackunknown = models.CharField(max_length=1, blank=True, null=True)
-    back470 = models.DecimalField(max_digits=12, decimal_places=6, blank=True, null=True)
-    cback470 = models.DecimalField(max_digits=12, decimal_places=6, blank=True, null=True)
-    qback470 = models.CharField(max_length=1, blank=True, null=True)
-    back532 = models.DecimalField(max_digits=12, decimal_places=6, blank=True, null=True)
-    cback532 = models.DecimalField(max_digits=12, decimal_places=6, blank=True, null=True)
-    qback532 = models.CharField(max_length=1, blank=True, null=True)
-    back700 = models.DecimalField(max_digits=12, decimal_places=6, blank=True, null=True)
-    cback700 = models.DecimalField(max_digits=12, decimal_places=6, blank=True, null=True)
-    qback700 = models.CharField(max_length=1, blank=True, null=True)
-
-    class Meta:
-        managed = False
-        db_table = 'argobbp'
-        unique_together = (('platform_number', 'cycle_number'),)
-
-
-class ArgoCdom(models.Model):
-    platform_number = models.IntegerField(primary_key=True)
-    cycle_number = models.IntegerField()
-    pressure = models.DecimalField(max_digits=7, decimal_places=1, blank=True, null=True)
-    cpressure = models.DecimalField(max_digits=7, decimal_places=1, blank=True, null=True)
-    qpressure = models.CharField(max_length=1, blank=True, null=True)
-    cdom = models.DecimalField(max_digits=10, decimal_places=4, blank=True, null=True)
-    ccdom = models.DecimalField(max_digits=10, decimal_places=4, blank=True, null=True)
-    qcdom = models.CharField(max_length=1, blank=True, null=True)
-
-    class Meta:
-        managed = False
-        db_table = 'argocdom'
-        unique_together = (('platform_number', 'cycle_number'),)
-
-
-class ArgoChla(models.Model):
-    platform_number = models.IntegerField(primary_key=True)
-    cycle_number = models.IntegerField()
-    pressure = models.DecimalField(max_digits=7, decimal_places=1, blank=True, null=True)
-    cpressure = models.DecimalField(max_digits=7, decimal_places=1, blank=True, null=True)
-    qpressure = models.CharField(max_length=1, blank=True, null=True)
-    chla = models.DecimalField(max_digits=10, decimal_places=4, blank=True, null=True)
-    cchla = models.DecimalField(max_digits=10, decimal_places=4, blank=True, null=True)
-    qchla = models.CharField(max_length=1, blank=True, null=True)
-
-    class Meta:
-        managed = False
-        db_table = 'argochla'
-        unique_together = (('platform_number', 'cycle_number'),)
-
-
-class ArgoCore(models.Model):
-    platform_number = models.IntegerField()
-    cycle_number = models.IntegerField(primary_key=True)
-    pressure = models.DecimalField(max_digits=7, decimal_places=1, blank=True, null=True)
-    cpressure = models.DecimalField(max_digits=7, decimal_places=1, blank=True, null=True)
-    qpressure = models.CharField(max_length=1, blank=True, null=True)
-    temperature = models.DecimalField(max_digits=9, decimal_places=3, blank=True, null=True)
-    ctemperature = models.DecimalField(max_digits=9, decimal_places=3, blank=True, null=True)
-    qtemperature = models.CharField(max_length=1, blank=True, null=True)
-    salinity = models.DecimalField(max_digits=9, decimal_places=3, blank=True, null=True)
-    csalinity = models.DecimalField(max_digits=9, decimal_places=3, blank=True, null=True)
-    qsalinity = models.CharField(max_length=1, blank=True, null=True)
-
-    class Meta:
-        managed = False
-        db_table = 'argocore'
-        unique_together = (('cycle_number', 'platform_number'),)
-
-
-class ArgoDoxy(models.Model):
-    platform_number = models.IntegerField(primary_key=True)
-    cycle_number = models.IntegerField()
-    pressure = models.DecimalField(max_digits=7, decimal_places=1, blank=True, null=True)
-    cpressure = models.DecimalField(max_digits=7, decimal_places=1, blank=True, null=True)
-    qpressure = models.CharField(max_length=1, blank=True, null=True)
-    tempdoxy = models.DecimalField(max_digits=9, decimal_places=3, blank=True, null=True)
-    ctempdoxy = models.DecimalField(max_digits=9, decimal_places=3, blank=True, null=True)
-    qtempdoxy = models.CharField(max_length=1, blank=True, null=True)
-    doxygen = models.DecimalField(max_digits=9, decimal_places=3, blank=True, null=True)
-    cdoxygen = models.DecimalField(max_digits=9, decimal_places=3, blank=True, null=True)
-    qdoxygen = models.CharField(max_length=1, blank=True, null=True)
-
-    class Meta:
-        managed = False
-        db_table = 'argodoxy'
-        unique_together = (('platform_number', 'cycle_number'),)
+from django.contrib.postgres.fields import ArrayField
 
 
 class ArgoFloat(models.Model):
@@ -149,24 +51,119 @@ class ArgoHeader(models.Model):
         unique_together = (('platform_number', 'cycle_number'),)
 
 
+class ArgoBbp(models.Model):
+    platform_number = models.IntegerField(primary_key=True)
+    cycle_number = models.IntegerField()
+    pressure = ArrayField(models.DecimalField(max_digits=7, decimal_places=1, blank=True, null=True))
+    cpressure = ArrayField(models.DecimalField(max_digits=7, decimal_places=1, blank=True, null=True))
+    qpressure = ArrayField(models.CharField(max_length=1, blank=True, null=True))
+    backunknown = ArrayField(models.DecimalField(max_digits=12, decimal_places=6, blank=True, null=True))
+    cbackunknown = ArrayField(models.DecimalField(max_digits=12, decimal_places=6, blank=True, null=True))
+    qbackunknown = ArrayField(models.CharField(max_length=1, blank=True, null=True))
+    back470 = ArrayField(models.DecimalField(max_digits=12, decimal_places=6, blank=True, null=True))
+    cback470 = ArrayField(models.DecimalField(max_digits=12, decimal_places=6, blank=True, null=True))
+    qback470 = ArrayField(models.CharField(max_length=1, blank=True, null=True))
+    back532 = ArrayField(models.DecimalField(max_digits=12, decimal_places=6, blank=True, null=True))
+    cback532 = ArrayField(models.DecimalField(max_digits=12, decimal_places=6, blank=True, null=True))
+    qback532 = ArrayField(models.CharField(max_length=1, blank=True, null=True))
+    back700 = ArrayField(models.DecimalField(max_digits=12, decimal_places=6, blank=True, null=True))
+    cback700 = ArrayField(models.DecimalField(max_digits=12, decimal_places=6, blank=True, null=True))
+    qback700 = ArrayField(models.CharField(max_length=1, blank=True, null=True))
+
+    class Meta:
+        managed = False
+        db_table = 'argobbp'
+        unique_together = (('platform_number', 'cycle_number'),)
+
+
+class ArgoCdom(models.Model):
+    platform_number = models.IntegerField(primary_key=True)
+    cycle_number = models.IntegerField()
+    pressure = ArrayField(models.DecimalField(max_digits=7, decimal_places=1, blank=True, null=True))
+    cpressure = ArrayField(models.DecimalField(max_digits=7, decimal_places=1, blank=True, null=True))
+    qpressure = ArrayField(models.CharField(max_length=1, blank=True, null=True))
+    cdom = ArrayField(models.DecimalField(max_digits=10, decimal_places=4, blank=True, null=True))
+    ccdom = ArrayField(models.DecimalField(max_digits=10, decimal_places=4, blank=True, null=True))
+    qcdom = ArrayField(models.CharField(max_length=1, blank=True, null=True))
+
+    class Meta:
+        managed = False
+        db_table = 'argocdom'
+        unique_together = (('platform_number', 'cycle_number'),)
+
+
+class ArgoChla(models.Model):
+    platform_number = models.IntegerField(primary_key=True)
+    cycle_number = models.IntegerField()
+    pressure = ArrayField(models.DecimalField(max_digits=7, decimal_places=1, blank=True, null=True))
+    cpressure = ArrayField(models.DecimalField(max_digits=7, decimal_places=1, blank=True, null=True))
+    qpressure = ArrayField(models.CharField(max_length=1, blank=True, null=True))
+    chla = ArrayField(models.DecimalField(max_digits=10, decimal_places=4, blank=True, null=True))
+    cchla = ArrayField(models.DecimalField(max_digits=10, decimal_places=4, blank=True, null=True))
+    qchla = ArrayField(models.CharField(max_length=1, blank=True, null=True))
+
+    class Meta:
+        managed = False
+        db_table = 'argochla'
+        unique_together = (('platform_number', 'cycle_number'),)
+
+
+class ArgoCore(models.Model):
+    platform_number = models.IntegerField()
+    cycle_number = models.IntegerField(primary_key=True)
+    pressure = ArrayField(models.DecimalField(max_digits=7, decimal_places=1, blank=True, null=True))
+    cpressure = ArrayField(models.DecimalField(max_digits=7, decimal_places=1, blank=True, null=True))
+    qpressure = ArrayField(models.CharField(max_length=1, blank=True, null=True))
+    temperature = ArrayField(models.DecimalField(max_digits=9, decimal_places=3, blank=True, null=True))
+    ctemperature = ArrayField(models.DecimalField(max_digits=9, decimal_places=3, blank=True, null=True))
+    qtemperature = ArrayField(models.CharField(max_length=1, blank=True, null=True))
+    salinity = ArrayField(models.DecimalField(max_digits=9, decimal_places=3, blank=True, null=True))
+    csalinity = ArrayField(models.DecimalField(max_digits=9, decimal_places=3, blank=True, null=True))
+    qsalinity = ArrayField(models.CharField(max_length=1, blank=True, null=True))
+
+    class Meta:
+        managed = False
+        db_table = 'argocore'
+        unique_together = (('cycle_number', 'platform_number'),)
+
+
+class ArgoDoxy(models.Model):
+    platform_number = models.IntegerField(primary_key=True)
+    cycle_number = models.IntegerField()
+    pressure = ArrayField(models.DecimalField(max_digits=7, decimal_places=1, blank=True, null=True))
+    cpressure = ArrayField(models.DecimalField(max_digits=7, decimal_places=1, blank=True, null=True))
+    qpressure = ArrayField(models.CharField(max_length=1, blank=True, null=True))
+    tempdoxy = ArrayField(models.DecimalField(max_digits=9, decimal_places=3, blank=True, null=True))
+    ctempdoxy = ArrayField(models.DecimalField(max_digits=9, decimal_places=3, blank=True, null=True))
+    qtempdoxy = ArrayField(models.CharField(max_length=1, blank=True, null=True))
+    doxygen = ArrayField(models.DecimalField(max_digits=9, decimal_places=3, blank=True, null=True))
+    cdoxygen = ArrayField(models.DecimalField(max_digits=9, decimal_places=3, blank=True, null=True))
+    qdoxygen = ArrayField(models.CharField(max_length=1, blank=True, null=True))
+
+    class Meta:
+        managed = False
+        db_table = 'argodoxy'
+        unique_together = (('platform_number', 'cycle_number'),)
+
+
 class ArgoIrra(models.Model):
     platform_number = models.IntegerField(primary_key=True)
     cycle_number = models.IntegerField()
-    pressure = models.DecimalField(max_digits=7, decimal_places=1, blank=True, null=True)
-    cpressure = models.DecimalField(max_digits=7, decimal_places=1, blank=True, null=True)
-    qpressure = models.CharField(max_length=1, blank=True, null=True)
-    downirra412 = models.DecimalField(db_column='downIrra412', max_digits=12, decimal_places=6, blank=True, null=True)  # Field name made lowercase.
-    cdownirra412 = models.DecimalField(db_column='cdownIrra412', max_digits=12, decimal_places=6, blank=True, null=True)  # Field name made lowercase.
-    qdownirra412 = models.CharField(db_column='qdownIrra412', max_length=1, blank=True, null=True)  # Field name made lowercase.
-    downirra443 = models.DecimalField(db_column='downIrra443', max_digits=12, decimal_places=6, blank=True, null=True)  # Field name made lowercase.
-    cdownirra443 = models.DecimalField(db_column='cdownIrra443', max_digits=12, decimal_places=6, blank=True, null=True)  # Field name made lowercase.
-    qdownirra443 = models.CharField(db_column='qdownIrra443', max_length=1, blank=True, null=True)  # Field name made lowercase.
-    downirra490 = models.DecimalField(db_column='downIrra490', max_digits=12, decimal_places=6, blank=True, null=True)  # Field name made lowercase.
-    cdownirra490 = models.DecimalField(db_column='cdownIrra490', max_digits=12, decimal_places=6, blank=True, null=True)  # Field name made lowercase.
-    qdownirra490 = models.CharField(db_column='qdownIrra490', max_length=1, blank=True, null=True)  # Field name made lowercase.
-    par = models.DecimalField(max_digits=12, decimal_places=6, blank=True, null=True)
-    cpar = models.DecimalField(max_digits=12, decimal_places=6, blank=True, null=True)
-    qpar = models.CharField(max_length=1, blank=True, null=True)
+    pressure = ArrayField(models.DecimalField(max_digits=7, decimal_places=1, blank=True, null=True))
+    cpressure = ArrayField(models.DecimalField(max_digits=7, decimal_places=1, blank=True, null=True))
+    qpressure = ArrayField(models.CharField(max_length=1, blank=True, null=True))
+    downirra412 = ArrayField(models.DecimalField(db_column='downIrra412', max_digits=12, decimal_places=6, blank=True, null=True))  # Field name made lowercase.
+    cdownirra412 = ArrayField(models.DecimalField(db_column='cdownIrra412', max_digits=12, decimal_places=6, blank=True, null=True))  # Field name made lowercase.
+    qdownirra412 = ArrayField(models.CharField(db_column='qdownIrra412', max_length=1, blank=True, null=True))  # Field name made lowercase.
+    downirra443 = ArrayField(models.DecimalField(db_column='downIrra443', max_digits=12, decimal_places=6, blank=True, null=True))  # Field name made lowercase.
+    cdownirra443 = ArrayField(models.DecimalField(db_column='cdownIrra443', max_digits=12, decimal_places=6, blank=True, null=True))  # Field name made lowercase.
+    qdownirra443 = ArrayField(models.CharField(db_column='qdownIrra443', max_length=1, blank=True, null=True))  # Field name made lowercase.
+    downirra490 = ArrayField(models.DecimalField(db_column='downIrra490', max_digits=12, decimal_places=6, blank=True, null=True))  # Field name made lowercase.
+    cdownirra490 = ArrayField(models.DecimalField(db_column='cdownIrra490', max_digits=12, decimal_places=6, blank=True, null=True))  # Field name made lowercase.
+    qdownirra490 = ArrayField(models.CharField(db_column='qdownIrra490', max_length=1, blank=True, null=True))  # Field name made lowercase.
+    par = ArrayField(models.DecimalField(max_digits=12, decimal_places=6, blank=True, null=True))
+    cpar = ArrayField(models.DecimalField(max_digits=12, decimal_places=6, blank=True, null=True))
+    qpar = ArrayField(models.CharField(max_length=1, blank=True, null=True))
 
     class Meta:
         managed = False
@@ -177,12 +174,12 @@ class ArgoIrra(models.Model):
 class ArgoNitr(models.Model):
     platform_number = models.IntegerField(primary_key=True)
     cycle_number = models.IntegerField()
-    pressure = models.DecimalField(max_digits=7, decimal_places=1, blank=True, null=True)
-    cpressure = models.DecimalField(max_digits=7, decimal_places=1, blank=True, null=True)
-    qpressure = models.CharField(max_length=1, blank=True, null=True)
-    nitrate = models.DecimalField(max_digits=9, decimal_places=3, blank=True, null=True)
-    cnitrate = models.DecimalField(max_digits=9, decimal_places=3, blank=True, null=True)
-    qnitrate = models.CharField(max_length=1, blank=True, null=True)
+    pressure = ArrayField(models.DecimalField(max_digits=7, decimal_places=1, blank=True, null=True))
+    cpressure = ArrayField(models.DecimalField(max_digits=7, decimal_places=1, blank=True, null=True))
+    qpressure = ArrayField(models.CharField(max_length=1, blank=True, null=True))
+    nitrate = ArrayField(models.DecimalField(max_digits=9, decimal_places=3, blank=True, null=True))
+    cnitrate = ArrayField(models.DecimalField(max_digits=9, decimal_places=3, blank=True, null=True))
+    qnitrate = ArrayField(models.CharField(max_length=1, blank=True, null=True))
 
     class Meta:
         managed = False
@@ -193,12 +190,12 @@ class ArgoNitr(models.Model):
 class ArgoPh(models.Model):
     platform_number = models.IntegerField(primary_key=True)
     cycle_number = models.IntegerField()
-    pressure = models.DecimalField(max_digits=7, decimal_places=1, blank=True, null=True)
-    cpressure = models.DecimalField(max_digits=7, decimal_places=1, blank=True, null=True)
-    qpressure = models.CharField(max_length=1, blank=True, null=True)
-    ph = models.DecimalField(max_digits=10, decimal_places=4, blank=True, null=True)
-    cph = models.DecimalField(max_digits=10, decimal_places=4, blank=True, null=True)
-    qph = models.CharField(max_length=1, blank=True, null=True)
+    pressure = ArrayField(models.DecimalField(max_digits=7, decimal_places=1, blank=True, null=True))
+    cpressure = ArrayField(models.DecimalField(max_digits=7, decimal_places=1, blank=True, null=True))
+    qpressure = ArrayField(models.CharField(max_length=1, blank=True, null=True))
+    ph = ArrayField(models.DecimalField(max_digits=10, decimal_places=4, blank=True, null=True))
+    cph = ArrayField(models.DecimalField(max_digits=10, decimal_places=4, blank=True, null=True))
+    qph = ArrayField(models.CharField(max_length=1, blank=True, null=True))
 
     class Meta:
         managed = False
@@ -209,11 +206,11 @@ class ArgoPh(models.Model):
 #     platform_number = models.IntegerField()
 #     cycle_number = models.IntegerField()
 #     date_creation = models.DateTimeField()
-#     project_name = models.CharField(max_length=255)
-#     pi_name = models.CharField(max_length=255)
-#     instrument_type = models.CharField(max_length=255)
-#     sample_direction = models.CharField(max_length=1)
-#     data_mode = models.CharField(max_length=1)
+#     project_name = ArrayField(models.CharField(max_length=255)
+#     pi_name = ArrayField(models.CharField(max_length=255)
+#     instrument_type = ArrayField(models.CharField(max_length=255)
+#     sample_direction = ArrayField(models.CharField(max_length=1)
+#     data_mode = ArrayField(models.CharField(max_length=1)
 #     julian_day = models.FloatField()
 #     date = models.DateTimeField()
 #     latitude = models.FloatField()

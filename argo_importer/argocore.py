@@ -86,7 +86,7 @@ def profile_data_to_json(path):
 if __name__ == "__main__":
     import os
 
-    os.environ['DJANGO_SETTINGS_MODULE'] = 'djangoing.settings'
+    os.environ['DJANGO_SETTINGS_MODULE'] = 'argobox.settings'
 
     import django
     from django.conf import settings
@@ -113,6 +113,7 @@ if __name__ == "__main__":
         if models.ArgoCore.objects.filter(platform_number=entry['platform_number'],
                                           cycle_number=entry['cycle_number']).exists():
             # pass if the record already exists
+            print("{}@{} - already exists".format(entry['platform_number'], entry['cycle_number']))
             continue
 
         e = models.ArgoCore(
