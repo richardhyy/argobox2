@@ -77,9 +77,9 @@ function searchCompletion() {
 }
 
 function loadProfile(platformNumber, cycleNumber) {
-    httpGet(`api/core/${platformNumber}/${cycleNumber}`,
+    httpGet(`api/profile/core/${platformNumber}/${cycleNumber}`,
         (data) => {
-            let profile = JSON.parse(data);
+            let profile = data;
             if (profile.features.length === 0) {
                 clearProfileList();
             } else {
@@ -88,7 +88,7 @@ function loadProfile(platformNumber, cycleNumber) {
                     profile.features[0].properties["ctemperature"]);
             }
         },
-        (error) => alert(error));
+        (error) => alert(`Error: ${error.message}`));
 }
 
 function showProfileDiagram(pressure, salinity, temperature) {

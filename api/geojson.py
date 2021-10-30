@@ -7,10 +7,10 @@ FEATURE_TEMPLATE = """{{
     "id": "{id}",
     "geometry": {{
         "type": "{type}",
-        "coordinates": [{coordinates}]
+        "coordinates": {coordinates}
     }},
     "geometry_name": "the_geom",
-    "properties": {{{properties}}}
+    "properties": {properties}
 }}"""
 
 FEATURE_COLLECTION_TEMPLATE = """{{
@@ -32,9 +32,9 @@ FEATURE_COLLECTION_TEMPLATE = """{{
 def create_point_feature(feature_id, coordinates, properties):
     feature = FEATURE_TEMPLATE.format(
         id=feature_id,
-        type=('Point' if len(coordinates) == 1 else 'MultiPoint'),
-        coordinates=(','.join([('[' + (','.join([str(v) for v in pair])) + ']') for pair in coordinates])),
-        properties=properties
+        type='Point',
+        coordinates='null' if not coordinates else (','.join([('[' + (','.join([str(v) for v in pair])) + ']') for pair in coordinates])),
+        properties=str(properties).replace('\'', '\"')
     )
     # feature['id'] = feature_id
     # feature['geometry']['type'] = 'Point' if len(coordinates) == 1 else 'MultiPoint'

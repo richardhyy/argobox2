@@ -27,7 +27,7 @@ function loadRemoteGeoJson(url, painter, onComplete) {
     httpGet(url,
         function (data) {
             console.log(data);
-            let promise = Cesium.GeoJsonDataSource.load(JSON.parse(data));
+            let promise = Cesium.GeoJsonDataSource.load(data);
             promise.then(function (dataSource) {
                 viewer.dataSources.add(dataSource);
                 painter(dataSource);

@@ -11,6 +11,21 @@ import api.models as models
 import api.geojson as geojson
 
 
+ProfileTypeDict = {
+    'core': models.ArgoCore.objects,
+    'bbp': models.ArgoBbp.objects,
+    'cdom': models.ArgoCdom.objects,
+    'chla': models.ArgoChla.objects,
+    'doxy': models.ArgoDoxy.objects,
+    'irra': models.ArgoIrra.objects,
+    'nitr': models.ArgoNitr.objects,
+    'ph': models.ArgoPh.objects,
+}
+
+
+ProfileEssentialFields = ['platform_number', 'cycle_number']
+
+
 def header(request, platform_number, cycle_number):
     query = models.ArgoHeader.objects
     if platform_number != 'all':
@@ -44,37 +59,33 @@ def header(request, platform_number, cycle_number):
             )
         )
 
-    print("Timing start")
+    # print("Timing start")
     t1 = time.time_ns() / 1000
     collection = geojson.create_point_collection(features)
-    print(time.time_ns() / 1000 - t1)
+    # print(time.time_ns() / 1000 - t1)
 
     return HttpResponse(collection, content_type='application/json')
 
 
-def core(request, platform_number, cycle_number):
-    data = models.ArgoCore.objects.filter(platform_number=platform_number, cycle_number=cycle_number).first()
+def core(request, type, platform_number, cycle_number):
+    profile_objects = ProfileTypeDict.get(type)
+    if profile_objects is None:
+        return HttpResponse("No such type")
 
+    data = profile_objects.filter(platform_number=platform_number, cycle_number=cycle_number).first()
     features = []
-    features.append(
-        geojson.create_point_feature(
+
+    if data is not None:
+        data_dict = {}
+        for key, value in data:
+            if key not in ProfileEssentialFields:
+                data_dict[key] = value
+        features.append(geojson.create_point_feature(
             str(data['platform_number']) + '@' + str(data['cycle_number']),
-            [data['longitude'], data['latitude']],
-            {
-                'cycle_number': data['cycle_number'],
-                'pressure': data['pressure'],
-                'cpressure': data['cpressure'],
-                'qpressure': data['qpressure'],
-                'temperature': data['temperature'],
-                'ctemperature': data['ctemperature'],
-                'qtemperature': data['qtemperature'],
-                'salinity': data['salinity'],
-                'csalinity': data['csalinity'],
-                'qsalinity': data['qsalinity']
-            }
-        )
-    )
+            None,
+            data_dict
+        ))
 
     collection = geojson.create_point_collection(features)
 
-    return HttpResponse(json.dumps(collection), content_type='application/json')
+    return HttpResponse(collection, content_type='application/json')

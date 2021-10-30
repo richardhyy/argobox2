@@ -76,9 +76,9 @@ input[type='text']::-ms-input-placeholder { /* Microsoft Edge */
     top: 0;
     left: 0;
     right: 0;
-    /*background: rgba(44, 49, 56, 0.8);*/
-    /*backdrop-filter: blur(12px);*/
-    /*-webkit-backdrop-filter: blur(12px);*/
+    background: rgba(44, 49, 56, 0.8);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
     z-index: 110;
 }
 
