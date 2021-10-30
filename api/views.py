@@ -5,6 +5,9 @@ from django.http import HttpResponse
 from django.http import JsonResponse
 
 from django.db.models import Q
+from django.forms.models import model_to_dict
+
+from decimal import Decimal
 
 import api.models as models
 
@@ -24,6 +27,13 @@ ProfileTypeDict = {
 
 
 ProfileEssentialFields = ['platform_number', 'cycle_number']
+
+
+class DecimalEncoder(json.JSONEncoder):
+    def default(self, obj):
+        if isinstance(obj, Decimal):
+            return float(obj)
+        return json.JSONEncoder.default(self, obj)
 
 
 def header(request, platform_number, cycle_number):
@@ -67,23 +77,23 @@ def header(request, platform_number, cycle_number):
     return HttpResponse(collection, content_type='application/json')
 
 
-def core(request, type, platform_number, cycle_number):
-    profile_objects = ProfileTypeDict.get(type)
-    if profile_objects is None:
+def profile(request, type, platform_number, cycle_number):
+    profile_model = ProfileTypeDict.get(type)
+    if profile_model is None:
         return HttpResponse("No such type")
 
-    data = profile_objects.filter(platform_number=platform_number, cycle_number=cycle_number).first()
+    data = profile_model.filter(platform_number=platform_number, cycle_number=cycle_number).first()
     features = []
 
     if data is not None:
-        data_dict = {}
-        for key, value in data:
-            if key not in ProfileEssentialFields:
-                data_dict[key] = value
+        data_dict = model_to_dict(data)
+        # for k, v in model_to_dict(data):
+        #     if k not in ProfileEssentialFields:
+        #         data_dict[k] = v
         features.append(geojson.create_point_feature(
-            str(data['platform_number']) + '@' + str(data['cycle_number']),
+            'profile_' + str(data_dict['platform_number']) + '@' + str(data_dict['cycle_number']),
             None,
-            data_dict
+            json.dumps(data_dict, cls=DecimalEncoder)
         ))
 
     collection = geojson.create_point_collection(features)

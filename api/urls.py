@@ -5,5 +5,5 @@ from . import views
 app_name = 'api'
 urlpatterns = [
     path('header/<str:platform_number>/<str:cycle_number>', views.header, name='header'),
-    path('profile/<str:type>/<str:platform_number>/<str:cycle_number>', views.core, name='profile_core'),
+    path('profile/<str:type>/<str:platform_number>/<str:cycle_number>', views.profile, name='profile_data'),
 ]
