@@ -56,6 +56,7 @@ def header(request, platform_number, cycle_number):
                 str(data['platform_number']) + '@' + str(data['cycle_number']),
                 [[data['longitude'], data['latitude']]],
                 {
+                    'platform_number': data['platform_number'],
                     'cycle_number': data['cycle_number'],
                     'date_creation': str(data['date_creation']),
                     'project_name': data['project_name'],
