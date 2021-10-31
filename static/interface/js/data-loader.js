@@ -56,7 +56,7 @@ function colorizeArgoPoints(dataSource, zIndex, color = "#2ca2a7", labeled = fal
                 argo.name = argo.id;
                 if (labeled) {
                     argo.label = {
-                        text : argo.properties['cycle_number'].getValue(),
+                        text : '' + argo.properties['cycle_number'].getValue(),
                         font : '12pt sans-serif',
                         style: Cesium.LabelStyle.FILL_AND_OUTLINE,
                         outlineWidth : 2,

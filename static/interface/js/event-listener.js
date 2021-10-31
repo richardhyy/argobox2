@@ -15,7 +15,7 @@ function search() {
                 document.getElementById("search-completion").style.display = "none";
 
                 console.log(data);
-                let features = JSON.parse(data);
+                let features = data;
                 if (features.totalFeatures >= 1) {
                     // add to layer
                     let promise = Cesium.GeoJsonDataSource.load(features);
