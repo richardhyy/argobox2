@@ -27,12 +27,12 @@ class ArgoFloat(models.Model):
     geom = models.TextField(blank=True, null=True)  # This field type is a guess.
 
     class Meta:
-        managed = False
+        managed = True
         db_table = 'argofloat'
 
 
 class ArgoHeader(models.Model):
-    platform_number = models.IntegerField(primary_key=True)
+    platform_number = models.IntegerField()
     cycle_number = models.IntegerField()
     date_creation = models.DateTimeField()
     project_name = models.CharField(max_length=255)
@@ -46,13 +46,13 @@ class ArgoHeader(models.Model):
     longitude = models.FloatField()
 
     class Meta:
-        managed = False
+        managed = True
         db_table = 'argoheader'
         unique_together = (('platform_number', 'cycle_number'),)
 
 
 class ArgoBbp(models.Model):
-    platform_number = models.IntegerField(primary_key=True)
+    platform_number = models.IntegerField()
     cycle_number = models.IntegerField()
     pressure = ArrayField(models.DecimalField(max_digits=7, decimal_places=1, blank=True, null=True))
     cpressure = ArrayField(models.DecimalField(max_digits=7, decimal_places=1, blank=True, null=True))
@@ -71,13 +71,13 @@ class ArgoBbp(models.Model):
     qback700 = ArrayField(models.CharField(max_length=1, blank=True, null=True))
 
     class Meta:
-        managed = False
+        managed = True
         db_table = 'argobbp'
         unique_together = (('platform_number', 'cycle_number'),)
 
 
 class ArgoCdom(models.Model):
-    platform_number = models.IntegerField(primary_key=True)
+    platform_number = models.IntegerField()
     cycle_number = models.IntegerField()
     pressure = ArrayField(models.DecimalField(max_digits=7, decimal_places=1, blank=True, null=True))
     cpressure = ArrayField(models.DecimalField(max_digits=7, decimal_places=1, blank=True, null=True))
@@ -87,13 +87,13 @@ class ArgoCdom(models.Model):
     qcdom = ArrayField(models.CharField(max_length=1, blank=True, null=True))
 
     class Meta:
-        managed = False
+        managed = True
         db_table = 'argocdom'
         unique_together = (('platform_number', 'cycle_number'),)
 
 
 class ArgoChla(models.Model):
-    platform_number = models.IntegerField(primary_key=True)
+    platform_number = models.IntegerField()
     cycle_number = models.IntegerField()
     pressure = ArrayField(models.DecimalField(max_digits=7, decimal_places=1, blank=True, null=True))
     cpressure = ArrayField(models.DecimalField(max_digits=7, decimal_places=1, blank=True, null=True))
@@ -103,14 +103,14 @@ class ArgoChla(models.Model):
     qchla = ArrayField(models.CharField(max_length=1, blank=True, null=True))
 
     class Meta:
-        managed = False
+        managed = True
         db_table = 'argochla'
         unique_together = (('platform_number', 'cycle_number'),)
 
 
 class ArgoCore(models.Model):
     platform_number = models.IntegerField()
-    cycle_number = models.IntegerField(primary_key=True)
+    cycle_number = models.IntegerField()
     pressure = ArrayField(models.DecimalField(max_digits=7, decimal_places=1, blank=True, null=True))
     cpressure = ArrayField(models.DecimalField(max_digits=7, decimal_places=1, blank=True, null=True))
     qpressure = ArrayField(models.CharField(max_length=1, blank=True, null=True))
@@ -122,13 +122,13 @@ class ArgoCore(models.Model):
     qsalinity = ArrayField(models.CharField(max_length=1, blank=True, null=True))
 
     class Meta:
-        managed = False
+        managed = True
         db_table = 'argocore'
         unique_together = (('cycle_number', 'platform_number'),)
 
 
 class ArgoDoxy(models.Model):
-    platform_number = models.IntegerField(primary_key=True)
+    platform_number = models.IntegerField()
     cycle_number = models.IntegerField()
     pressure = ArrayField(models.DecimalField(max_digits=7, decimal_places=1, blank=True, null=True))
     cpressure = ArrayField(models.DecimalField(max_digits=7, decimal_places=1, blank=True, null=True))
@@ -141,13 +141,13 @@ class ArgoDoxy(models.Model):
     qdoxygen = ArrayField(models.CharField(max_length=1, blank=True, null=True))
 
     class Meta:
-        managed = False
+        managed = True
         db_table = 'argodoxy'
         unique_together = (('platform_number', 'cycle_number'),)
 
 
 class ArgoIrra(models.Model):
-    platform_number = models.IntegerField(primary_key=True)
+    platform_number = models.IntegerField()
     cycle_number = models.IntegerField()
     pressure = ArrayField(models.DecimalField(max_digits=7, decimal_places=1, blank=True, null=True))
     cpressure = ArrayField(models.DecimalField(max_digits=7, decimal_places=1, blank=True, null=True))
@@ -166,13 +166,13 @@ class ArgoIrra(models.Model):
     qpar = ArrayField(models.CharField(max_length=1, blank=True, null=True))
 
     class Meta:
-        managed = False
+        managed = True
         db_table = 'argoirra'
         unique_together = (('platform_number', 'cycle_number'),)
 
 
 class ArgoNitr(models.Model):
-    platform_number = models.IntegerField(primary_key=True)
+    platform_number = models.IntegerField()
     cycle_number = models.IntegerField()
     pressure = ArrayField(models.DecimalField(max_digits=7, decimal_places=1, blank=True, null=True))
     cpressure = ArrayField(models.DecimalField(max_digits=7, decimal_places=1, blank=True, null=True))
@@ -182,13 +182,13 @@ class ArgoNitr(models.Model):
     qnitrate = ArrayField(models.CharField(max_length=1, blank=True, null=True))
 
     class Meta:
-        managed = False
+        managed = True
         db_table = 'argonitr'
         unique_together = (('platform_number', 'cycle_number'),)
 
 
 class ArgoPh(models.Model):
-    platform_number = models.IntegerField(primary_key=True)
+    platform_number = models.IntegerField()
     cycle_number = models.IntegerField()
     pressure = ArrayField(models.DecimalField(max_digits=7, decimal_places=1, blank=True, null=True))
     cpressure = ArrayField(models.DecimalField(max_digits=7, decimal_places=1, blank=True, null=True))
@@ -198,7 +198,7 @@ class ArgoPh(models.Model):
     qph = ArrayField(models.CharField(max_length=1, blank=True, null=True))
 
     class Meta:
-        managed = False
+        managed = True
         db_table = 'argoph'
         unique_together = (('platform_number', 'cycle_number'),)
 
