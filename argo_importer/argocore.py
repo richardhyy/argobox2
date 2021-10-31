@@ -76,18 +76,20 @@ def parse_profile_data(path):
                 _value = split[i]
                 data_table[i].append(_value)
         else:
+            original_line = line
+            # store the original line text because some data contains space and we don't want to discard them when saving
             line = remove_space(line)
             contains_meta = False
             for key, value in meta_prefix_field_dict.items():
                 # if the line contains the meta info we need
-                split = line.split(':', 1)
-                if split[0] == remove_space(key):
+                split = original_line.split(':', 1)
+                if remove_space(split[0]) == remove_space(key):
                     # Get string on the lhs of '('
                     # Example (We need 'A' here):
                     #     SAMPLE DIRECTION      :A(A=Ascend; D=Descend)
                     if '(' in split[1]:
                         split[1] = split[1].split('(', 1)[0]
-                    out_entries['meta'][value] = split[1]
+                    out_entries['meta'][value] = split[1].replace('"', '\\"')  # escaping double quote
                     contains_meta = True
                     break
             if not contains_meta and contain_ignore_space(line, 'COLUMN'):
