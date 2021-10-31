@@ -35,6 +35,7 @@ function loadRemoteGeoJson(url, painter, onComplete) {
             });
         },
         function (error) {
+            alert(`Error occurred during requesting API`);
             console.log(error);
         })
 }
