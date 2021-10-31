@@ -23,6 +23,17 @@
         </ul>
     </div>
     <div id="profile-container" class="float-box float-bottom" style="display: none">
+        <div id="diagram-switch-container">
+            <button class="inline-switch cesium-button" onclick="loadProfileForSelected('core')">Core</button>
+            <button class="inline-switch cesium-button" onclick="loadProfileForSelected('bbp')">BBP</button>
+            <button class="inline-switch cesium-button" onclick="loadProfileForSelected('cdom')">CDOM</button>
+            <button class="inline-switch cesium-button" onclick="loadProfileForSelected('chla')">Chl-a</button>
+            <button class="inline-switch cesium-button" onclick="loadProfileForSelected('doxy')">DOXY</button>
+            <button class="inline-switch cesium-button" onclick="loadProfileForSelected('irra')">Irra</button>
+            <button class="inline-switch cesium-button" onclick="loadProfileForSelected('nitr')">Nitr</button>
+            <button class="inline-switch cesium-button" onclick="loadProfileForSelected('ph')">PH</button>
+        </div>
+        <div id="no-data-label">No data</div>
         <div id="diagram-container" class="profile-diagram"></div>
     </div>
 </div>

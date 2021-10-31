@@ -1,3 +1,5 @@
+let selectedEntity;
+
 function search() {
     let searchWord = $('#search-text').val();
     if (searchWord === "") {
@@ -76,101 +78,26 @@ function searchCompletion() {
     })
 }
 
-function loadProfile(platformNumber, cycleNumber) {
-    httpGet(`api/profile/core/${platformNumber}/${cycleNumber}`,
-        (data) => {
-            let profile = data;
-            if (profile.features.length === 0) {
-                clearProfileList();
-            } else {
-                showProfileDiagram(profile.features[0].properties["cpressure"],
-                    profile.features[0].properties["csalinity"],
-                    profile.features[0].properties["ctemperature"]);
+function loadProfileForSelected(type) {
+    console.log(selectedEntity);
+    if (Cesium.defined(selectedEntity)) {
+        if (Cesium.defined(selectedEntity.name)) {
+            console.log('Selected ' + selectedEntity.name);
+            if (selectedEntity.properties !== undefined) {
+                let platformNumber = selectedEntity.properties["platform_number"];
+                let cycleNumber = selectedEntity.properties["cycle_number"];
+                loadProfile(platformNumber, cycleNumber, type);
+                return;
             }
-        },
-        (error) => alert(`Error: ${error.message}`));
-}
+            console.log("Closing diagram.");
+        } else {
+            console.log('Unknown entity selected.');
+        }
+    } else {
+        console.log('Deselected.');
+    }
+    clearProfileList();
 
-function showProfileDiagram(pressure, salinity, temperature) {
-    document.getElementById("profile-container").style.display = "block";
-
-    let profileDom = document.getElementById("diagram-container");
-    let profileChart = echarts.init(profileDom, 'dark');
-
-    let colors = ['#6d82c4', '#e88181'];
-
-    let option = {
-        color: colors,
-        backgroundColor: 'transparent',
-
-        tooltip: {
-            trigger: 'none',
-            axisPointer: {
-                type: 'cross'
-            }
-        },
-        legend: {
-            data:['Salinity (PSU)', 'Temperature (℃)']
-        },
-        grid: {
-            top: 70,
-            bottom: 50
-        },
-        xAxis: [
-            {
-                type: 'category',
-                axisTick: {
-                    alignWithLabel: true
-                },
-                axisLine: {
-                    onZero: false,
-                    lineStyle: {
-                        color: colors[1]
-                    }
-                },
-                axisPointer: {
-                    label: {
-                        formatter: function (params) {
-                            return 'Pressure  ' + params.value + ' (dbar)';
-                        }
-                    }
-                },
-                data: pressure
-            }
-        ],
-        yAxis: [
-            {
-                type: 'value'
-            }
-        ],
-        series: [
-            {
-                name: 'Salinity (PSU)',
-                type: 'line',
-                smooth: true,
-                emphasis: {
-                    focus: 'series'
-                },
-                label: {
-                    formatter: function (params) {
-                        return params.value;
-                    }
-                },
-                data: salinity
-            },
-            {
-                name: 'Temperature (℃)',
-                type: 'line',
-                smooth: true,
-                emphasis: {
-                    focus: 'series'
-                },
-                data: temperature
-            }
-        ]
-    };
-
-    option && profileChart.setOption(option);
 }
 
 function clearProfileList() {
@@ -193,21 +120,8 @@ $('#search-text').on('input', function () {
 
 $('#search-btn').on('click', search);
 
-viewer.selectedEntityChanged.addEventListener(function(selectedEntity) {
-    if (Cesium.defined(selectedEntity)) {
-        if (Cesium.defined(selectedEntity.name)) {
-            console.log('Selected ' + selectedEntity.name);
-            if (selectedEntity.properties !== undefined) {
-                let platformNumber = selectedEntity.properties["platform_number"];
-                let cycleNumber = selectedEntity.properties["cycle_number"];
-                loadProfile(platformNumber, cycleNumber);
-                return;
-            }
-        } else {
-            console.log('Unknown entity selected.');
-        }
-    } else {
-        console.log('Deselected.');
-    }
-    clearProfileList();
+viewer.selectedEntityChanged.addEventListener(function(entity) {
+    selectedEntity = entity;
+    console.log(selectedEntity);
+    loadProfileForSelected("core");
 });

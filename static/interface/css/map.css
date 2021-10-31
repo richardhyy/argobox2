@@ -144,6 +144,24 @@ input[type='text']::-ms-input-placeholder { /* Microsoft Edge */
     font-weight: bold;
 }
 
+#diagram-switch-container {
+    display: flex;
+    flex-wrap: nowrap;
+    overflow: auto;
+    margin-bottom: 10px;
+}
+
+.inline-switch {
+    flex: 0 0 auto;
+    margin: 5px;
+}
+
+#no-data-label {
+    color: #b4b4c8;
+    text-align: center;
+    line-height: 300px;
+}
+
 .profile-diagram {
     width: 100%;
     min-height: 300px;
