@@ -100,3 +100,11 @@ def profile(request, type, platform_number, cycle_number):
     collection = geojson.create_point_collection(features)
 
     return HttpResponse(collection, content_type='application/json')
+
+
+def last_update(request):
+    response = {}
+    for profile_type in ProfileTypeDict.keys():
+        response[profile_type] = str(models.DatasetHistory.objects.filter(dataset_type=profile_type)
+                                     .order_by('-last_update').first().last_update)
+    return JsonResponse(response)
