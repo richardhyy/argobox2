@@ -1,10 +1,6 @@
-from collections import OrderedDict
 import os
-from os import listdir
-from os.path import isfile, join
-from datetime import datetime
 import tarfile
-from django.utils import timezone
+from datetime import datetime
 
 if __name__ == "__main__":
     os.environ['DJANGO_SETTINGS_MODULE'] = 'argobox.settings'
@@ -262,14 +258,14 @@ def archive_to_database(profile_type, archive_path):
             e = ArgoHeader(
                 platform_number=meta_entry['platform_number'],
                 cycle_number=meta_entry['cycle_number'],
-                date_creation=datetime.strptime(meta_entry['date_creation'], datetime_format),
+                date_creation=datetime.datetime.strptime(meta_entry['date_creation'], datetime_format),
                 project_name=meta_entry['project_name'],
                 pi_name=meta_entry['pi_name'],
                 instrument_type=meta_entry['instrument_type'],
                 sample_direction=meta_entry['sample_direction'],
                 data_mode=meta_entry['data_mode'],
                 julian_day=meta_entry['julian_day'],
-                date=datetime.strptime(meta_entry['date'], date_format),
+                date=datetime.datetime.strptime(meta_entry['date'], date_format),
                 latitude=meta_entry['latitude'],
                 longitude=meta_entry['longitude'],
             )

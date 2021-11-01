@@ -2,98 +2,74 @@ import ftplib
 import uuid
 import os
 from pathlib import PurePath
-from os import listdir
-from os.path import isfile, join
-from datetime import datetime
 from django.utils import timezone
-
-if __name__ == "__main__":
-    os.environ['DJANGO_SETTINGS_MODULE'] = 'argobox.settings'
-    import django
-
-    django.setup()
-
-    from django.conf import settings
 
 from api.models import DatasetHistory
 
-DefaultFtpConfiguration = {
-    'host': 'ftp.argo.org.cn',
-    'user': None,
-    'password': None,
-    'update_interval_hour_given_specified_filename': 24,
-    'cache_dir': settings.BASE_DIR / 'cache' / 'dataset',
-    'remote_datasets': [
-        {
-            'type': 'core',
-            'remote_dir': '/pub/ARGO/global/core',
-            'retrieve_limit': 3
-        },
-        {
-            'type': 'bbp',
-            'remote_dir': '/pub/ARGO/global/bgc',
-            'remote_filename': 'bgc_argo_bbp_prof.tar.gz'
-        },
-        {
-            'type': 'cdom',
-            'remote_dir': '/pub/ARGO/global/bgc',
-            'remote_filename': 'bgc_argo_cdom_prof.tar.gz'
-        },
-        {
-            'type': 'chla',
-            'remote_dir': '/pub/ARGO/global/bgc',
-            'remote_filename': 'bgc_argo_chla_prof.tar.gz'
-        },
-        {
-            'type': 'doxy',
-            'remote_dir': '/pub/ARGO/global/bgc',
-            'remote_filename': 'bgc_argo_doxy_prof.tar.gz'
-        },
-        {
-            'type': 'irra',
-            'remote_dir': '/pub/ARGO/global/bgc',
-            'remote_filename': 'bgc_argo_irra_prof.tar.gz'
-        },
-        {
-            'type': 'nitr',
-            'remote_dir': '/pub/ARGO/global/bgc',
-            'remote_filename': 'bgc_argo_nitr_prof.tar.gz'
-        },
-        {
-            'type': 'ph',
-            'remote_dir': '/pub/ARGO/global/bgc',
-            'remote_filename': 'bgc_argo_ph_prof.tar.gz'
-        },
-    ]
-}
 
-
-def fetch_profile(ftp_configuration=None):
+def fetch_profile(ftp_configuration):
     def retrieve_file(filename, destination):
+        print("Downloading {} > {}".format(filename, dest))
         try:
             ftp.retrbinary("RETR " + filename, open(destination, 'wb+').write)
+            print("Downloaded {}".format(filename))
+            return True
         except Exception as ex:
             print(ex)
             print("Error retrieving remote file: " + filename)
+            return False
 
     if ftp_configuration is None:
-        ftp_configuration = DefaultFtpConfiguration
+        raise Exception("Parameter ftp_configuration is required")
+
     ftp = ftplib.FTP(ftp_configuration['host'])
     ftp.login(ftp_configuration['user'], ftp_configuration['password'])
 
+    update_interval_hour_given_specified_filename = ftp_configuration['update_interval_hour_given_specified_filename']
     cache_dir = PurePath(ftp_configuration['cache_dir'])
     for dataset_entry in ftp_configuration['remote_datasets']:
         remote_dir = dataset_entry['remote_dir']
         current_dataset_type = dataset_entry['type']
 
-        ftp.cwd(remote_dir)
+        try:
+            ftp.cwd(remote_dir)
+        except Exception as ex:
+            print(ex)
+            print("Skipping fetching {}".format(current_dataset_type))
+            continue
+
         local_data_queryset = DatasetHistory.objects.filter(dataset_type=current_dataset_type)
 
         dest_dir = cache_dir / current_dataset_type
         os.makedirs(dest_dir, exist_ok=True)
 
         if 'remote_filename' in dataset_entry.keys():
-            print('Not implemented')
+            remote_filename = dataset_entry['remote_filename']
+            existing_history = local_data_queryset.filter(remote_dir=remote_dir, remote_filename=remote_filename).first()
+
+            # Check the need for updating
+            if existing_history is not None:
+                if not existing_history.need_update(update_interval_hour_given_specified_filename):
+                    print("Skipped updating {} profile (last update: {})"
+                          .format(current_dataset_type, existing_history.last_update))
+                    continue
+
+            unique_local_filename = str(uuid.uuid4())
+            dest = dest_dir / unique_local_filename
+            if retrieve_file(remote_filename, dest):
+                if existing_history is None:
+                    DatasetHistory.objects.create(
+                        dataset_type=current_dataset_type,
+                        remote_dir=remote_dir,
+                        remote_filename=remote_filename,
+                        local_filename=unique_local_filename,
+                        last_update=timezone.now()
+                    )
+                else:
+                    existing_history.last_update = timezone.now()
+                    existing_history.imported = False
+                    existing_history.save()
+
         else:
             # Detect file changes in folder
             data = []
@@ -117,19 +93,17 @@ def fetch_profile(ftp_configuration=None):
             for file in ordered_remote_file:
                 unique_local_filename = str(uuid.uuid4())
                 dest = dest_dir / unique_local_filename
-                print("Downloading {} > {}".format(file, dest))
-                retrieve_file(file, dest)
-                print("Downloaded {}".format(file))
-                DatasetHistory.objects.create(
-                    dataset_type=current_dataset_type,
-                    remote_dir=remote_dir,
-                    remote_filename=file,
-                    local_filename=unique_local_filename,
-                    last_update=timezone.now()
-                )
+                if retrieve_file(file, dest):
+                    DatasetHistory.objects.create(
+                        dataset_type=current_dataset_type,
+                        remote_dir=remote_dir,
+                        remote_filename=file,
+                        local_filename=unique_local_filename,
+                        last_update=timezone.now()
+                    )
 
     ftp.quit()
 
 
 if __name__ == '__main__':
-    fetch_profile()
+    print("Run cron.py")

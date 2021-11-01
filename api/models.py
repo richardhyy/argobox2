@@ -1,5 +1,7 @@
 from django.db import models
 from django.contrib.postgres.fields import ArrayField
+import datetime
+from django.utils import timezone
 
 
 class DatasetHistory(models.Model):
@@ -9,6 +11,9 @@ class DatasetHistory(models.Model):
     local_filename = models.CharField(max_length=128, null=False)
     last_update = models.DateTimeField(null=False)
     imported = models.BooleanField(default=False, null=False)
+
+    def need_update(self, time_interval_hour):
+        return self.last_update < timezone.now() - datetime.timedelta(hours=time_interval_hour)
 
 
 class ArgoFloat(models.Model):
