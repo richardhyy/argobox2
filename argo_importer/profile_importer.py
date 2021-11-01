@@ -3,6 +3,7 @@ import os
 from os import listdir
 from os.path import isfile, join
 from datetime import datetime
+import tarfile
 from django.utils import timezone
 
 if __name__ == "__main__":
@@ -132,7 +133,7 @@ ProfileTemplates = {
 }
 
 
-def parse_profile_data(path, column_header_prefix_field_dict):
+def parse_profile_data(file, column_header_prefix_field_dict):
     def remove_space(text):
         return text.replace(' ', '')
 
@@ -157,8 +158,7 @@ def parse_profile_data(path, column_header_prefix_field_dict):
 
     column_index_field_dict = {}
 
-    file = open(path, 'r')
-    lines = file.readlines()
+    lines = [line.decode("utf-8") for line in file.readlines()]
 
     out_entries = {
         'meta': {},
@@ -228,19 +228,20 @@ def parse_profile_data(path, column_header_prefix_field_dict):
     return out_entries
 
 
-def folder_to_database(profile_type, folder_path):
+def archive_to_database(profile_type, archive_path):
     if profile_type not in ProfileTemplates.keys():
         raise Exception("No such profile type: {}".format(profile_type))
 
     template = ProfileTemplates[profile_type]
 
-    files = [f for f in listdir(folder_path) if isfile(join(folder_path, f))]
+    tar = tarfile.open(archive_path, "r:gz")
 
     print("Parsing data...")
-
     profile_entries = []
-    for file in files:
-        profile_entries.append(parse_profile_data(folder_path + "/" + file, template['headers']))
+    for member in tar.getmembers():
+        f = tar.extractfile(member)
+        if f is not None:
+            profile_entries.append(parse_profile_data(f, template['headers']))
 
     print("{} profile files loaded".format(len(profile_entries)))
     print("Updating database...")
@@ -311,5 +312,5 @@ def folder_to_database(profile_type, folder_path):
 
 if __name__ == "__main__":
     profile_type = input("Profile type (avail: {}): ".format(', '.join([name for name in ProfileTemplates.keys()])))
-    path = input("Path to Argo {} profile folder: ".format(profile_type)).replace('\'', '')
-    folder_to_database(profile_type, path)
+    path = input("Path to Argo {} profile archive (*.tar.gz): ".format(profile_type)).replace('\'', '')
+    archive_to_database(profile_type, path)
