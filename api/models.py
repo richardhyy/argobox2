@@ -2,6 +2,15 @@ from django.db import models
 from django.contrib.postgres.fields import ArrayField
 
 
+class DatasetHistory(models.Model):
+    dataset_type = models.CharField(max_length=10, null=False)
+    remote_dir = models.CharField(max_length=256, null=False)
+    remote_filename = models.CharField(max_length=128, null=False)
+    local_filename = models.CharField(max_length=128, null=False)
+    last_update = models.DateTimeField(null=False)
+    imported = models.BooleanField(default=False, null=False)
+
+
 class ArgoFloat(models.Model):
     platform_number = models.IntegerField(primary_key=True)
     transmission_system = models.CharField(max_length=8, blank=True, null=True)
