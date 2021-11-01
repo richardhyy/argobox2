@@ -1,16 +1,18 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <title>ArgoBox</title>
-    <link rel="stylesheet" href="../../static/interface/libs/Cesium/Widgets/widgets.css">
-    <link rel="stylesheet" href="../../static/interface/css/map.css">
-    <script src="../../static/interface/libs/Cesium/Cesium.js"></script>
-    <script src="../../static/libs/jquery/jquery.min.js"></script>
-    <script src="../../static/libs/echarts/echarts.js"></script>
-    <script src="../../static/interface/js/imagery-provider.util.js"></script>
-    <script src="../../static/interface/js/geometries-helper.util.js"></script>
-    <script src="../../static/interface/js/task-manager.js"></script>
+    <link rel="stylesheet" href="{% static 'interface/libs/Cesium/Widgets/widgets.css' %}">
+    <link rel="stylesheet" href="{% static 'interface/css/map.css' %}">
+    <link rel="stylesheet" href="{% static 'libs/bootstrap/bootstrap.min.css' %}">
+    <script src="{% static 'interface/libs/Cesium/Cesium.js' %}"></script>
+    <script src="{% static 'libs/jquery/jquery.min.js' %}"></script>
+    <script src="{% static 'libs/echarts/echarts.js' %}"></script>
+    <script src="{% static 'interface/js/imagery-provider.util.js' %}"></script>
+    <script src="{% static 'interface/js/geometries-helper.util.js' %}"></script>
+    <script src="{% static 'interface/js/task-manager.js' %}"></script>
 </head>
 <body>
 <div id="searchtool-container">
@@ -46,8 +48,9 @@
     </div>
 </div>
 <div id="cesiumContainer"></div>
-<script src="../../static/interface/js/map-init.js"></script>
-<script src="../../static/interface/js/data-loader.js"></script>
-<script src="../../static/interface/js/event-listener.js"></script> <!-- Should not be moved into <head> -->
+<script src="{% static 'interface/js/map-init.js' %}"></script>
+<script src="{% static 'interface/js/data-loader.js' %}"></script>
+<script src="{% static 'interface/js/event-listener.js' %}"></script> <!-- Should not be moved into <head> -->
+
 </body>
 </html>
