@@ -98,15 +98,20 @@ def fetch_profile(ftp_configuration=None):
             # Detect file changes in folder
             data = []
             ftp.dir(data.append)
-            remote_file_set = set([line.replace('  ', '').split(' ')[-1] for line in data])
-            local_file_set = set([entry.remote_filename for entry in local_data_queryset.values()])
+
+            remote_file_list = sorted([line.replace('  ', '').split(' ')[-1] for line in data], reverse=True)
+            # Extract latest n files
+            if 'retrieve_limit' in dataset_entry.keys() and dataset_entry['retrieve_limit'] > 0:
+                limit = dataset_entry['retrieve_limit']
+                remote_file_list = remote_file_list[0:min(limit, len(remote_file_list))]
+
+            # Exclude downloaded files
+            remote_file_set = set(remote_file_list)
+            local_file_set = set([entry['remote_filename'] for entry in local_data_queryset.values()])
             new_files = remote_file_set - local_file_set
 
             # Download new files in DESC order
-            ordered_remote_file = sorted(list(new_files), reverse=True)
-            if 'retrieve_limit' in dataset_entry.keys() and dataset_entry['retrieve_limit'] > 0:
-                limit = dataset_entry['retrieve_limit']
-                ordered_remote_file = ordered_remote_file[0:min(limit, len(ordered_remote_file))]
+            ordered_remote_file = sorted(list(new_files))
 
             print("{} file(s) pending for {}".format(len(ordered_remote_file), current_dataset_type))
             for file in ordered_remote_file:
