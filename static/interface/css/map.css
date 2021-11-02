@@ -189,6 +189,12 @@ input[type='text']::-ms-input-placeholder { /* Microsoft Edge */
     color: #e2e3e4;
 }
 
+#search-tip {
+    text-align: center;
+    font-size: small;
+    color: rgba(226, 227, 228, 0.6);
+}
+
 #search-completion>ul {
     list-style-type: none;
     margin: 0;

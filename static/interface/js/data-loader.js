@@ -1,81 +1,3 @@
-// MARK: - Data Loading
-
-let taskManager = new TaskManager("loading-modal");
-
-taskManager.newTask(() => loadRemoteGeoJson(
-        "api/header/all/latest",
-        (source) => colorizeArgoPoints(source, 1),
-        () => taskManager.removeTask("load-latest-header")),
-    "load-latest-header",
-    "Loading latest Argo float locations");
-
-taskManager.commit();
-
-
-// Mark: - Map Related Functions
-
-function httpGet(url, onSuccess, onError) {
-    $.ajax({
-        url: url,
-        type: 'GET',
-        success: data => onSuccess(data),
-        error: error => onError(error)
-    })
-}
-
-function loadRemoteGeoJson(url, painter, onComplete) {
-    httpGet(url,
-        function (data) {
-            console.log(data);
-            let promise = Cesium.GeoJsonDataSource.load(data);
-            promise.then(function (dataSource) {
-                viewer.dataSources.add(dataSource);
-                painter(dataSource);
-                onComplete();
-            });
-        },
-        function (error) {
-            alert(`Error occurred during requesting API`);
-            console.log(error);
-        })
-}
-
-function colorizeArgoPoints(dataSource, zIndex, color = "#2ca2a7", labeled = false) {
-    taskManager.newTask(() => {
-            let features = dataSource.entities.values;
-            for (let i = 0; i < features.length; i++) {
-                let argo = features[i];
-                argo.billboard = undefined;
-                argo.point = new Cesium.PointGraphics({
-                    color: new Cesium.Color.fromCssColorString(color),
-                    pixelSize: 14,
-                    scaleByDistance: new Cesium.NearFarScalar(0, 1.0, 2.0e7, 0.5),
-                    zIndex: zIndex,
-                });
-                argo.name = argo.id;
-                if (labeled) {
-                    argo.label = {
-                        text: '' + argo.properties['cycle_number'].getValue(),
-                        font: '12pt sans-serif',
-                        style: Cesium.LabelStyle.FILL_AND_OUTLINE,
-                        outlineWidth: 2,
-                        verticalOrigin: Cesium.VerticalOrigin.BOTTOM,
-                        pixelOffset: new Cesium.Cartesian2(0, -9)
-                    }
-                }
-            }
-            // make argo features globally available
-            document.argoFeatures = features;
-
-            taskManager.removeTask("colorize-argo-points");
-        },
-        "colorize-argo-points",
-        "Colorizing Argo points");
-    taskManager.commit();
-}
-
-
-// MARK: - Profile related
 const ProfileTypeDiagramDescription = {
     "core": {
         "data_series": [
@@ -175,6 +97,89 @@ const ProfileTypeDiagramDescription = {
     },
 };
 
+document.getElementById('search-tip').innerText += Object.keys(ProfileTypeDiagramDescription).join()
+
+// MARK: - Data Loading
+
+let taskManager = new TaskManager("loading-modal");
+
+taskManager.newTask(() => loadRemoteGeoJson(
+        "api/header/all/all/latest",
+        (source) => colorizeArgoPoints(source, 1),
+        () => taskManager.removeTask("load-latest-header")),
+    "load-latest-header",
+    "Loading latest Argo float locations");
+
+taskManager.commit();
+
+
+// Mark: - Map Related Functions
+
+function httpGet(url, onSuccess, onError) {
+    $.ajax({
+        url: url,
+        type: 'GET',
+        success: data => onSuccess(data),
+        error: error => onError(error)
+    })
+}
+
+function loadRemoteGeoJson(url, painter, onComplete, removeOthers = false) {
+    httpGet(url,
+        function (data) {
+            console.log(data);
+            let promise = Cesium.GeoJsonDataSource.load(data);
+            promise.then(function (dataSource) {
+                if (removeOthers) {
+                    viewer.dataSources.removeAll();
+                }
+                viewer.dataSources.add(dataSource);
+                painter(dataSource);
+                onComplete();
+            });
+        },
+        function (error) {
+            alert(`Error occurred during requesting API`);
+            console.log(error);
+        })
+}
+
+function colorizeArgoPoints(dataSource, zIndex, color = "#2ca2a7", labeled = false) {
+    taskManager.newTask(() => {
+            let features = dataSource.entities.values;
+            for (let i = 0; i < features.length; i++) {
+                let argo = features[i];
+                argo.billboard = undefined;
+                argo.point = new Cesium.PointGraphics({
+                    color: new Cesium.Color.fromCssColorString(color),
+                    pixelSize: 14,
+                    scaleByDistance: new Cesium.NearFarScalar(0, 1.0, 2.0e7, 0.5),
+                    zIndex: zIndex,
+                });
+                argo.name = argo.id;
+                if (labeled) {
+                    argo.label = {
+                        text: '' + argo.properties['cycle_number'].getValue(),
+                        font: '12pt sans-serif',
+                        style: Cesium.LabelStyle.FILL_AND_OUTLINE,
+                        outlineWidth: 2,
+                        verticalOrigin: Cesium.VerticalOrigin.BOTTOM,
+                        pixelOffset: new Cesium.Cartesian2(0, -9)
+                    }
+                }
+            }
+            // make argo features globally available
+            document.argoFeatures = features;
+
+            taskManager.removeTask("colorize-argo-points");
+        },
+        "colorize-argo-points",
+        "Colorizing Argo points");
+    taskManager.commit();
+}
+
+
+// MARK: - Profile related
 function loadProfile(platformNumber, cycleNumber, type = "core") {
     httpGet(`api/profile/${type}/${platformNumber}/${cycleNumber}`,
         function (data) {
@@ -319,7 +324,7 @@ function matchFloatList(keyword) {
         let platformNumber = float.properties["platform_number"].getValue();
         let projectName = float.properties["project_name"].getValue();
         if (platformNumber !== null) {
-            let appearAt = platformNumber.indexOf(keyword.toLowerCase());
+            let appearAt = platformNumber.toString().indexOf(keyword.toLowerCase());
             if (appearAt === -1 && projectName !== null) {
                 appearAt = projectName.indexOf(keyword)
             }
