@@ -72,10 +72,7 @@ def header(request, profile_type, platform_number, cycle_number):
             )
         )
 
-    # print("Timing start")
-    # t1 = time.time_ns() / 1000
     collection = geojson.create_point_collection(features)
-    # print(time.time_ns() / 1000 - t1)
 
     return HttpResponse(collection, content_type='application/json')
 

@@ -16,35 +16,6 @@ class DatasetHistory(models.Model):
         return self.last_update < timezone.now() - datetime.timedelta(hours=time_interval_hour)
 
 
-class ArgoFloat(models.Model):
-    platform_number = models.IntegerField(primary_key=True)
-    transmission_system = models.CharField(max_length=8, blank=True, null=True)
-    postioning_system = models.CharField(max_length=16, blank=True, null=True)
-    platform_model = models.CharField(max_length=16, blank=True, null=True)
-    platform_maker = models.CharField(max_length=24, blank=True, null=True)
-    fireware_version = models.CharField(max_length=32, blank=True, null=True)
-    serial_number = models.CharField(max_length=8, blank=True, null=True)
-    maual_version = models.CharField(max_length=16, blank=True, null=True)
-    wmo_type = models.CharField(max_length=3, blank=True, null=True)
-    project_name = models.CharField(max_length=64, blank=True, null=True)
-    pi_name = models.CharField(max_length=40, blank=True, null=True)
-    data_center = models.CharField(max_length=2, blank=True, null=True)
-    launch_date = models.CharField(max_length=14, blank=True, null=True)
-    launch_latitude = models.DecimalField(max_digits=6, decimal_places=3, blank=True, null=True)
-    launch_longitude = models.DecimalField(max_digits=6, decimal_places=3, blank=True, null=True)
-    launch_platform = models.CharField(max_length=24, blank=True, null=True)
-    park_pressure = models.IntegerField(blank=True, null=True)
-    profile_pressure = models.IntegerField(blank=True, null=True)
-    startup_date = models.CharField(max_length=14, blank=True, null=True)
-    cruise_id = models.CharField(max_length=32, blank=True, null=True)
-    float_status = models.BooleanField(blank=True, null=True)
-    geom = models.TextField(blank=True, null=True)  # This field type is a guess.
-
-    class Meta:
-        managed = True
-        db_table = 'argofloat'
-
-
 class ArgoHeader(models.Model):
     platform_number = models.IntegerField()
     cycle_number = models.IntegerField()

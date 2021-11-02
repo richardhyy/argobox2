@@ -13,37 +13,6 @@ class Migration(migrations.Migration):
 
     operations = [
         migrations.CreateModel(
-            name='ArgoFloat',
-            fields=[
-                ('platform_number', models.IntegerField(primary_key=True, serialize=False)),
-                ('transmission_system', models.CharField(blank=True, max_length=8, null=True)),
-                ('postioning_system', models.CharField(blank=True, max_length=16, null=True)),
-                ('platform_model', models.CharField(blank=True, max_length=16, null=True)),
-                ('platform_maker', models.CharField(blank=True, max_length=24, null=True)),
-                ('fireware_version', models.CharField(blank=True, max_length=32, null=True)),
-                ('serial_number', models.CharField(blank=True, max_length=8, null=True)),
-                ('maual_version', models.CharField(blank=True, max_length=16, null=True)),
-                ('wmo_type', models.CharField(blank=True, max_length=3, null=True)),
-                ('project_name', models.CharField(blank=True, max_length=64, null=True)),
-                ('pi_name', models.CharField(blank=True, max_length=40, null=True)),
-                ('data_center', models.CharField(blank=True, max_length=2, null=True)),
-                ('launch_date', models.CharField(blank=True, max_length=14, null=True)),
-                ('launch_latitude', models.DecimalField(blank=True, decimal_places=3, max_digits=6, null=True)),
-                ('launch_longitude', models.DecimalField(blank=True, decimal_places=3, max_digits=6, null=True)),
-                ('launch_platform', models.CharField(blank=True, max_length=24, null=True)),
-                ('park_pressure', models.IntegerField(blank=True, null=True)),
-                ('profile_pressure', models.IntegerField(blank=True, null=True)),
-                ('startup_date', models.CharField(blank=True, max_length=14, null=True)),
-                ('cruise_id', models.CharField(blank=True, max_length=32, null=True)),
-                ('float_status', models.BooleanField(blank=True, null=True)),
-                ('geom', models.TextField(blank=True, null=True)),
-            ],
-            options={
-                'db_table': 'argofloat',
-                'managed': True,
-            },
-        ),
-        migrations.CreateModel(
             name='DatasetHistory',
             fields=[
                 ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
