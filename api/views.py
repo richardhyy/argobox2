@@ -36,8 +36,12 @@ class DecimalEncoder(json.JSONEncoder):
         return json.JSONEncoder.default(self, obj)
 
 
-def header(request, platform_number, cycle_number):
+def header(request, profile_type, platform_number, cycle_number):
     query = models.ArgoHeader.objects
+
+    if profile_type != 'all':
+        specified_type_platform_numbers = ProfileTypeDict[profile_type].all().values_list("platform_number")
+        query = query.filter(platform_number__in=specified_type_platform_numbers)
     if platform_number != 'all':
         query = query.filter(platform_number=int(platform_number))
     if cycle_number == 'latest':
@@ -46,8 +50,6 @@ def header(request, platform_number, cycle_number):
         query = query.filter(cycle_number=int(cycle_number))
 
     data_values = query.values()
-
-    # TODO: Optimization - speed up model to json
 
     features = []
     for data in data_values:
@@ -78,8 +80,8 @@ def header(request, platform_number, cycle_number):
     return HttpResponse(collection, content_type='application/json')
 
 
-def profile(request, type, platform_number, cycle_number):
-    profile_model = ProfileTypeDict.get(type)
+def profile(request, profile_type, platform_number, cycle_number):
+    profile_model = ProfileTypeDict.get(profile_type)
     if profile_model is None:
         return HttpResponse("No such type")
 
