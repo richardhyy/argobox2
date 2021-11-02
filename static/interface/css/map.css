@@ -225,6 +225,26 @@ input[type='text']::-ms-input-placeholder { /* Microsoft Edge */
     text-align: center;
 }
 
+.notification {
+    position: fixed;
+    bottom: 10px;
+    left: 50%;
+    transform: translate(-50%, 0);
+    padding: 8px 60px;
+    font-size: small;
+    color: rgba(226, 227, 228, 0.6);
+    background-color: rgba(30, 39, 47, 0.65);
+    border: rgba(65, 74, 80, 0.65) solid 1px;
+    border-radius: 4px;
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    z-index: 100;
+}
+
+.closable {
+    cursor: pointer;
+}
+
 @media only screen and (max-width: 768px) {
     #searchtool-container {
         width: 95%;

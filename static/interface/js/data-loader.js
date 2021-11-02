@@ -106,7 +106,20 @@ let taskManager = new TaskManager("loading-modal");
 taskManager.newTask(() => loadRemoteGeoJson(
         "api/header/all/all/latest",
         (source) => colorizeArgoPoints(source, 1),
-        () => taskManager.removeTask("load-latest-header")),
+        () => {
+            taskManager.removeTask("load-latest-header");
+
+            // Load latest update date after completing the task
+            httpGet("api/info/lastupdate",
+                function (data) {
+                    let notificationDiv = document.getElementById("bottom-notification");
+                    notificationDiv.innerText = "Last update: " + data.overall_last;
+                    notificationDiv.style.display = "block";
+                },
+                function (error) {
+                    console.log(error);
+                });
+        }),
     "load-latest-header",
     "Loading latest Argo float locations");
 

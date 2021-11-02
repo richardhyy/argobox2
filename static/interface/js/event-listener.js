@@ -162,6 +162,10 @@ $('#search-text').on('input', function () {
 
 $('#search-btn').on('click', search);
 
+$('#bottom-notification').on('click', function () {
+    $('#bottom-notification').fadeOut();
+})
+
 viewer.selectedEntityChanged.addEventListener(function(entity) {
     selectedEntity = entity;
     console.log(selectedEntity);

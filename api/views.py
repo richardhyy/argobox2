@@ -103,7 +103,13 @@ def profile(request, profile_type, platform_number, cycle_number):
 
 def last_update(request):
     response = {}
+    last_date = None
     for profile_type in ProfileTypeDict.keys():
-        response[profile_type] = str(models.DatasetHistory.objects.filter(dataset_type=profile_type)
-                                     .order_by('-last_update').first().last_update)
+        _date = models.DatasetHistory.objects.filter(dataset_type=profile_type).order_by('-last_update').first().last_update
+        if last_date is None:
+            last_date = _date
+        elif last_date < _date:
+            last_date = _date
+        response[profile_type] = _date
+    response["overall_last"] = last_date
     return JsonResponse(response)
