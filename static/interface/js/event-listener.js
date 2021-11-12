@@ -120,16 +120,13 @@ function searchCompletion() {
     })
 }
 
-function loadProfileForSelected(type) {
+function isEntitySelected() {
     console.log(selectedEntity);
     if (Cesium.defined(selectedEntity)) {
         if (Cesium.defined(selectedEntity.name)) {
             console.log('Selected ' + selectedEntity.name);
             if (selectedEntity.properties !== undefined) {
-                let platformNumber = selectedEntity.properties["platform_number"];
-                let cycleNumber = selectedEntity.properties["cycle_number"];
-                loadProfile(platformNumber, cycleNumber, type);
-                return;
+                return true;
             }
             console.log("Closing diagram.");
         } else {
@@ -138,9 +135,28 @@ function loadProfileForSelected(type) {
     } else {
         console.log('Deselected.');
     }
-    clearProfileList();
-
+    return false;
 }
+
+function loadProfileForSelected(type) {
+    let platformNumber = selectedEntity.properties["platform_number"];
+    let cycleNumber = selectedEntity.properties["cycle_number"];
+    loadProfile(platformNumber, cycleNumber, type);
+}
+
+
+function sendMetadataViaBridge() {
+    let keys = selectedEntity.properties._propertyNames;
+    let properties = {}
+    keys.forEach(key => {
+        properties[key] = selectedEntity.properties[key]._value;
+    })
+
+    if (bridge) {
+        sendBridgeMessage(properties, 'float-metadata');
+    }
+}
+
 
 function clearProfileList() {
     document.getElementById("profile-container").style.display = "none";
@@ -169,5 +185,12 @@ $('#bottom-notification').on('click', function () {
 viewer.selectedEntityChanged.addEventListener(function(entity) {
     selectedEntity = entity;
     console.log(selectedEntity);
-    loadProfileForSelected(defaultDiagramType);
+
+    if (isEntitySelected()) {
+        loadProfileForSelected(defaultDiagramType);
+        sendMetadataViaBridge();
+    } else {
+        clearProfileList();
+    }
+
 });
