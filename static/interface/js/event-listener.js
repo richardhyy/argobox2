@@ -194,3 +194,26 @@ viewer.selectedEntityChanged.addEventListener(function(entity) {
     }
 
 });
+
+
+let mouseHandler = new Cesium.ScreenSpaceEventHandler(canvas);
+mouseHandler.setInputAction(function (movement) {
+    let cartesian = camera.pickEllipsoid(
+        movement.endPosition,
+        globe.ellipsoid
+    );
+    let longitude = '-1';
+    let latitude = '-1';
+    if (cartesian) {
+        let cartographic = Cesium.Cartographic.fromCartesian(cartesian);
+        longitude = Cesium.Math.toDegrees(cartographic.longitude).toFixed(2);
+        latitude = Cesium.Math.toDegrees(cartographic.latitude).toFixed(2);
+
+        if (bridge) {
+            sendBridgeMessage({
+                'x': longitude,
+                'y': latitude
+            }, 'coordinates');
+        }
+    }
+}, Cesium.ScreenSpaceEventType.MOUSE_MOVE);

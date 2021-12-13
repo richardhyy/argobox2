@@ -5,7 +5,7 @@ let viewerOptions = {
     vrButton: false,
     geocoder: false,
     homeButton: false,
-    infoBox: true,
+    infoBox: !!bridge,
     sceneModePicker: true,
     timeline: false,
     navigationHelpButton: false,
