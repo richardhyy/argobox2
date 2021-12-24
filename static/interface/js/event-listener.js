@@ -2,7 +2,10 @@ let selectedEntity;
 let defaultDiagramType = "core";
 
 function search(keyword) {
-    let searchWord = keyword ? $('#search-text').val() : keyword;
+    if (keyword) {
+        $('#search-text').val(keyword);
+    }
+    let searchWord = $('#search-text').val();
     if (searchWord === "") {
         searchWord = "3900515 chla";
         $('#search-text').val(searchWord);
