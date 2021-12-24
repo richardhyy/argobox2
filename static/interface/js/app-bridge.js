@@ -8,8 +8,7 @@ function setBridge(appBridge) {
 function sendBridgeMessage(value, type) {
     if (bridge) {
         let wrapper = {
-            'type': type,
-            'data': value
+            'type': type, 'data': value
         }
         window['send' + bridge + 'ObjectMessage'](JSON.stringify(wrapper));
     }
@@ -21,17 +20,18 @@ function bridgeSetCurrentLocation(lon, lat) {
     if (currentPoint) {
         currentPoint.setLatLng([lat, lon]);
     } else {
-        currentPoint = GeometriesHelper.createPoint(viewer, "Your Position", "",
-            Cesium.Cartesian3.fromDegrees(lon, lat, 100),
-            30,
-            new Cesium.NearFarScalar(0, 1.0, 2.0e7, 0.5),
-            undefined,
-            new Cesium.DistanceDisplayCondition(0, 1000000),
-            Cesium.HeightReference.NONE,
-            Cesium.Color.ORANGE,
-            true,
-            Cesium.Color.SANDYBROWN,
-            2);
+        currentPoint = viewer.entities.add({
+            position: Cesium.Cartesian3.fromDegrees(lon, lat), billboard: {
+                image: 'static/interface/images/marker.png', width: 24, height: 24
+            }, label: {
+                text: 'Your Position',
+                font: '14pt monospace',
+                style: Cesium.LabelStyle.FILL_AND_OUTLINE,
+                outlineWidth: 2,
+                verticalOrigin: Cesium.VerticalOrigin.TOP,
+                pixelOffset: new Cesium.Cartesian2(0, 32)
+            }
+        });
     }
     viewer.zoomTo(currentPoint);
 }
