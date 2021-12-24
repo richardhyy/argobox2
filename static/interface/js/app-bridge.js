@@ -1,6 +1,7 @@
 let bridge = undefined;
 
 function setBridge(appBridge) {
+    console.log('Bridge set');
     bridge = appBridge;
 }
 
@@ -33,4 +34,8 @@ function bridgeSetCurrentLocation(lon, lat) {
             2);
     }
     viewer.zoomTo(currentPoint);
+}
+
+function hideSearchBar() {
+    $('#searchbar').fadeOut();
 }

@@ -1,8 +1,8 @@
 let selectedEntity;
 let defaultDiagramType = "core";
 
-function search() {
-    let searchWord = $('#search-text').val();
+function search(keyword) {
+    let searchWord = keyword ? $('#search-text').val() : keyword;
     if (searchWord === "") {
         searchWord = "3900515 chla";
         $('#search-text').val(searchWord);
@@ -40,12 +40,12 @@ function search() {
 
     if (platformNumber === "all") {
         taskManager.newTask(() => loadRemoteGeoJson(
-            `api/header/${profileType}/all/latest`,
-            (source) => colorizeArgoPoints(source, 1),
-            () => taskManager.removeTask("load-latest-header"),
-            true),
-        "load-latest-header",
-        "Loading latest Argo float locations");
+                `api/header/${profileType}/all/latest`,
+                (source) => colorizeArgoPoints(source, 1),
+                () => taskManager.removeTask("load-latest-header"),
+                true),
+            "load-latest-header",
+            "Loading latest Argo float locations");
     } else {
         let geoserverUrl = `api/header/${profileType}/${platformNumber}/all`;
 
@@ -115,7 +115,7 @@ function searchCompletion() {
     document.getElementById("search-completion").style.display = "block";
     target.innerHTML = "";
     list.forEach(item => {
-        let targetText = item.indexOf(" - ")===-1 ? item : item.split(" - ")[0];
+        let targetText = item.indexOf(" - ") === -1 ? item : item.split(" - ")[0];
         target.innerHTML += `<li onclick="$('#search-text').val('${targetText}')">${item}</li>`;
     })
 }
@@ -165,7 +165,7 @@ function clearProfileList() {
 $('#search-text').focus();
 $('#search-text').keypress(function (e) {
     const key = e.which;
-    if(key === 13)  // the enter key code
+    if (key === 13)  // the enter key code
     {
         search();
         return false;
@@ -182,7 +182,7 @@ $('#bottom-notification').on('click', function () {
     $('#bottom-notification').fadeOut();
 })
 
-viewer.selectedEntityChanged.addEventListener(function(entity) {
+viewer.selectedEntityChanged.addEventListener(function (entity) {
     selectedEntity = entity;
     console.log(selectedEntity);
 

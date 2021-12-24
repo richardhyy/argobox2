@@ -206,11 +206,38 @@ function loadProfile(platformNumber, cycleNumber, type = "core") {
             let profile = data;
             if (profile.features.length === 0) {
                 noDataLabel.style.display = "block";
+                if (bridge) {
+                    noDataLabel.style.lineHeight = '1.5em';
+                }
             } else {
-                diagram.style.display = "block";
-                showProfileDiagram(profile.features[0].properties["cpressure"],
-                    profile.features[0],
-                    ProfileTypeDiagramDescription[type]);
+                if (!bridge) {
+                    // Do not show diagram container if bridge is registered
+                    diagram.style.display = "block";
+                }
+
+                let series = {};
+                let i = 0;
+                ProfileTypeDiagramDescription[type]['data_series'].forEach(element => {
+                    series[i.toString()] = {
+                        name: element['name'],
+                        data: profile.features[0].properties[element['source']]
+                    };
+                    i++;
+                });
+                let payload = {
+                    'cpressure': profile.features[0].properties["cpressure"],
+                    'series': series
+                };
+                console.log(payload);
+
+                if (bridge) {
+                    // Do not show diagram if running in app
+                    sendBridgeMessage(payload, "float-profile");
+                } else {
+                    showProfileDiagram(profile.features[0].properties["cpressure"],
+                        profile.features[0],
+                        ProfileTypeDiagramDescription[type]);
+                }
             }
         },
         function (error) {
@@ -308,7 +335,7 @@ function showProfileDiagram(pressure, feature, diagramDescription) {
 
     function unselectGrap(params) {
         for (const legend in params.selected) {
-            if(legend !== params.name) {
+            if (legend !== params.name) {
                 profileChart.dispatchAction({
                     type: 'legendUnSelect',
                     // legend name
